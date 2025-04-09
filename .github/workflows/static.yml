@@ -1,3 +1,4 @@
+# Simple workflow for deploying static content to GitHub Pages
 name: Deploy static content to Pages
 
 on:
@@ -21,45 +22,22 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Single deploy job since we're just deploying
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      # Checkout the repository to get all files
       - name: Checkout
         uses: actions/checkout@v4
-        
-      # Generate the env.json file (or any other necessary files) if needed
-      - name: Generate env.json
-        run: |
-          echo '{"key": "value"}' > ./env.json  # Example: Create env.json file
-
-      # Optional: Validate that required files exist
-      - name: Check for required files
-        run: |
-          if [[ ! -f ./env.json ]]; then
-            echo "Error: env.json is missing!"
-            exit 1
-          fi
-          
-      # Setup Pages for GitHub Pages deployment
       - name: Setup Pages
         uses: actions/configure-pages@v5
-
-      # Archive the repository (including the generated files)
-      - name: Archive files for GitHub Pages
-        run: |
-          tar -czf artifact.tar.gz ./index.html ./README.md ./env.json  # Archive the specific files you want
-          
-      # Upload the artifact (ensure the correct path is provided)
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: artifact.tar.gz  # Upload the artifact containing all necessary files
-
-      # Deploy to GitHub Pages
+          # Upload entire repository
+          path: '.'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
